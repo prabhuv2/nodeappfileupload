@@ -69,7 +69,7 @@ app.post(api+'fileupload',function(req,res){
 app.post(api+"upload2",function(req,res){
     console.log(req.files);
 })
-
+ require('./routes')(app);
 app.listen(config.port,()=>{
     console.log('server running at port '+config.port);
 })
