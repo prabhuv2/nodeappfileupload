@@ -45,23 +45,40 @@ app.post(api+'fileupload',function(req,res){
             console.log(err);
           }
           else{
-            fs.createReadStream('upload/'+req.files[''].name)
-            .pipe(parse({delimiter: ':'}))
-            .on('data', function(csvrow) {
-            
-                //do something with csvrow
-                csvData.push(csvrow);     
-                console.log("pushing");   
-            })
-            .on('end',function() {
-                //do something wiht csvData
-                console.log('pushing done');
-                res.json({
-                    success:true,
-                    data:csvData
+              if(req.body.filetype == 'text')
+              {
+                fs.readFile('upload/'+file.name,function(err,data){
+                    if(err){
+                        res.json("error in reading file");
+                        console.log(err);
+                    }
+                    else{
+                        res.json(data.toString());
+                    }
                 })
-            });
-          }
+              }
+              else if(req.body.filetype == 'csv')
+              {
+                    fs.createReadStream('upload/'+req.files[''].name)
+                    .pipe(parse({delimiter: ':'}))
+                    .on('data', function(csvrow) {
+                    
+                        //do something with csvrow
+                        csvData.push(csvrow);     
+                        console.log("pushing");   
+                    })
+                    .on('end',function() {
+                        //do something wiht csvData
+                        console.log('pushing done');
+                        res.json({
+                            success:true,
+                            data:csvData,
+                            length:csvData.length
+                        })
+                    });
+              }
+               
+            }
     })
         
 })
